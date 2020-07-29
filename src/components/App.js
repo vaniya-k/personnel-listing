@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import FilterField from './FilterField';
 import Paginator from './Paginator';
 import List from './List';
+import Details from './Details';
 import sortItems from '../utils/sortItems';
 import filterItems from '../utils/filterItems';
 import sample from '../../src/mocks/large';
@@ -17,6 +18,9 @@ const App = () => {
   const [processedItems, setProcessedItems] = useState(null);
   const [itemsToDisplay, setItemsToDisplay] = useState(null);
 
+  const [detailsId, setDetailsId] = useState(null);
+  const [detailsData, setDetailsData] = useState(null);
+
   const handlePageNumberChange = (newVal) => {
     if(newVal !== activePageNumber) {
       setActivePageNumber(newVal);
@@ -29,7 +33,7 @@ const App = () => {
     }
   };
 
-  const handleColumnClick = (column) => {
+  const handleSortTypeChange = (column) => {
     if(sortType[column] === null) {
       setSortType({...initialSortType, [column]: `+`})
     } else if (sortType[column] === `+`) {
@@ -37,38 +41,52 @@ const App = () => {
     } else {
       setSortType({...initialSortType})
     }
-  }
+  };
+
+  const handleDetailsIdChange = (newVal, indexForItemsToDisplay) => {
+    if(newVal !== detailsId) {
+      setDetailsId(newVal);
+      setDetailsData(itemsToDisplay[indexForItemsToDisplay])
+    } else {
+      setDetailsId(null)
+    }
+  };
 
   useEffect(() => {
     setActivePageNumber(1);
 
     setProcessedItems(sortItems(sortType, filterItems(filterRequest, initialItems)));
-  }, [sortType, filterRequest, initialItems])
+  }, [sortType, filterRequest, initialItems]);
 
   useEffect(() => {
     if(processedItems !== null) {
       setItemsToDisplay(processedItems.slice((activePageNumber - 1) * ITEMS_PER_PAGE, activePageNumber * ITEMS_PER_PAGE))
     }
-  }, [activePageNumber, processedItems])
+  }, [activePageNumber, processedItems]);
 
   return (
-    <div style={{width: `700px`, border: `2px solid grey`, padding: `25px 15px`}}>
-      <FilterField
-        onFilterSubmit={handleFilterSubmit}
-        filterRequest={filterRequest}
-      />
-      {itemsToDisplay !== null && <List
-        itemsToDisplay={itemsToDisplay}
-        sortType={sortType}
-        onColumnClick={handleColumnClick}
-      />}
-      {itemsToDisplay !== null && <Paginator
-        entriesPerPage={ITEMS_PER_PAGE}
-        entriesQuantity={processedItems.length}
-        activePageNumber={activePageNumber}
-        onPageNumberChange={handlePageNumberChange}
-      />}
-    </div>
+    <>
+      <div style={{width: `700px`, border: `2px solid grey`, padding: `25px 15px`}}>
+        <FilterField
+          onFilterSubmit={handleFilterSubmit}
+          filterRequest={filterRequest}
+        />
+        {itemsToDisplay !== null && <List
+          itemsToDisplay={itemsToDisplay}
+          sortType={sortType}
+          onColumnClick={handleSortTypeChange}
+          onPersonClick={handleDetailsIdChange}
+          detailsId={detailsId}
+        />}
+        {itemsToDisplay !== null && <Paginator
+          entriesPerPage={ITEMS_PER_PAGE}
+          entriesQuantity={processedItems.length}
+          activePageNumber={activePageNumber}
+          onPageButtonClick={handlePageNumberChange}
+        />}
+      </div>
+      {detailsId !== null && <Details detailsData={detailsData}/>}
+    </>
   )
 };
 
