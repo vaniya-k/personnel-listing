@@ -3,6 +3,7 @@ import FilterField from './FilterField';
 import Paginator from './Paginator';
 import List from './List';
 import Details from './Details';
+import Form from './Form';
 import sortItems from '../utils/sortItems';
 import filterItems from '../utils/filterItems';
 import sample from '../../src/mocks/large';
@@ -66,26 +67,33 @@ const App = () => {
 
   return (
     <>
-      <div style={{width: `700px`, border: `2px solid grey`, padding: `25px 15px`}}>
-        <FilterField
-          onFilterSubmit={handleFilterSubmit}
-          filterRequest={filterRequest}
-        />
-        {itemsToDisplay !== null && <List
-          itemsToDisplay={itemsToDisplay}
-          sortType={sortType}
-          onColumnClick={handleSortTypeChange}
-          onPersonClick={handleDetailsIdChange}
-          detailsId={detailsId}
-        />}
-        {itemsToDisplay !== null && <Paginator
-          entriesPerPage={ITEMS_PER_PAGE}
-          entriesQuantity={processedItems.length}
-          activePageNumber={activePageNumber}
-          onPageButtonClick={handlePageNumberChange}
-        />}
+      <div style={{display: `flex`, alignItems: `flex-start`}}>
+        <div>
+          <div style={{width: `700px`, border: `2px solid grey`, padding: `25px 15px`}}>
+            {itemsToDisplay !== null && <FilterField
+              onFilterSubmit={handleFilterSubmit}
+              filterRequest={filterRequest}
+            />}
+            {itemsToDisplay !== null && <List
+              itemsToDisplay={itemsToDisplay}
+              sortType={sortType}
+              onColumnClick={handleSortTypeChange}
+              onPersonClick={handleDetailsIdChange}
+              detailsId={detailsId}
+            />}
+            {itemsToDisplay !== null && <Paginator
+              entriesPerPage={ITEMS_PER_PAGE}
+              entriesQuantity={processedItems.length}
+              activePageNumber={activePageNumber}
+              onPageButtonClick={handlePageNumberChange}
+            />}
+          </div>
+          {detailsId !== null && <Details detailsData={detailsData}/>}
+        </div>
+        <div style={{border: `2px solid grey`, marginLeft: `7px`, padding: `25px 20px`}}>
+          <Form/>
+        </div>
       </div>
-      {detailsId !== null && <Details detailsData={detailsData}/>}
     </>
   )
 };
