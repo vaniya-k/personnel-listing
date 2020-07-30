@@ -6,13 +6,15 @@ const useJsonFetch = (url) => {
   const [loading, setLoading] = useState(null);
 
   useEffect(() => {
-    setLoading(true);
-    setError(null);
+    if(url !== null) {
+      setLoading(true);
+      setError(null);
 
-    fetch(url)
-    .then(res => res.json())
-    .then(res => {setData(res); setLoading(false)})
-    .catch(error => {setError(error.message); setLoading(false)})
+      fetch(url)
+        .then(res => res.json())
+        .then(res => {setData(res); setLoading(false)})
+        .catch(err => {setError(err.message); setLoading(false)})
+    }
   }, [url]);
 
   return [data, loading, error];

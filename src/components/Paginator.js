@@ -39,7 +39,7 @@ const Paginator = ({activePageNumber, entriesPerPage, onPageButtonClick, entries
     <ul style={{listStyleType: `none`, padding: `0`, marginBottom: `0`}}>
       {buildPageButtons()}
     </ul>
-  );
+  )
 };
 
 export default Paginator;

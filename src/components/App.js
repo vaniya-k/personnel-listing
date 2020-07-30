@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import ListToggler from './ListToggler';
 import FilterField from './FilterField';
 import SortColumns from './SortColumns';
 import Paginator from './Paginator';
@@ -7,22 +8,37 @@ import Details from './Details';
 import Form from './Form';
 import sortItems from '../utils/sortItems';
 import filterItems from '../utils/filterItems';
-import sample from '../../src/mocks/large';
+import useJsonFetch from '../utils/useJsonFetch';
 
 const ITEMS_PER_PAGE = 20;
 
+const LIST_URLS = {
+  short: `http://www.filltext.com/?rows=32&id={number|1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}`,
+  long: `http://www.filltext.com/?rows=1000&id={number|1000}&firstName={firstName}&delay=3&lastName={lastName}&email={email}&phone={phone|(xxx)xxx-xx-xx}&address={addressObject}&description={lorem|32}`
+};
+
 const App = () => {
+  const [activeListType, setActiveListType] = useState(null);
+  const [url, setUrl] = useState(null);
+  const [apiData, loadingApiData, loadingApiDataError] = useJsonFetch(url);
+
   const initialSortType = {id: null, firstName: null, lastName: null, email: null, phone: null};
   const [sortType, setSortType] = useState({...initialSortType});
   const [activePageNumber, setActivePageNumber] = useState(1);
   const [filterRequest, setFilterRequest] = useState(``);
 
-  const [initialItems, setInitialItems] = useState(sample);
+  const [initialItems, setInitialItems] = useState(null);
   const [processedItems, setProcessedItems] = useState(null);
   const [itemsToDisplay, setItemsToDisplay] = useState(null);
 
   const [detailsId, setDetailsId] = useState(null);
   const [detailsData, setDetailsData] = useState(null);
+
+  const handleActiveListTypeChange = (newVal) => {
+    if(newVal !== activeListType && loadingApiData !== true) {
+      setActiveListType(newVal)
+    }
+  };
 
   const handlePageNumberChange = (newVal) => {
     if(newVal !== activePageNumber) {
@@ -56,18 +72,34 @@ const App = () => {
   };
 
   const handlePersonAdd = (person) => {
-    setItemsToDisplay(null);
-
     const tempInitialItems = [...initialItems];
     tempInitialItems.unshift(person);
-    
     setInitialItems(tempInitialItems);
   };
 
   useEffect(() => {
-    setActivePageNumber(1);
+    if(activeListType !== null) {
+      setItemsToDisplay(null);
+      setInitialItems(null);
 
-    setProcessedItems(sortItems(sortType, filterItems(filterRequest, initialItems)));
+      setDetailsId(null);
+      setFilterRequest(``);
+      setSortType(initialSortType);
+
+      setUrl(LIST_URLS[activeListType]);
+    }
+  }, [activeListType]);
+
+  useEffect(() => {
+    setInitialItems(apiData)
+  }, [apiData]);
+
+  useEffect(() => {
+    if(initialItems !== null) {
+      setActivePageNumber(1);
+
+      setProcessedItems(sortItems(sortType, filterItems(filterRequest, initialItems)));
+    }
   }, [sortType, filterRequest, initialItems]);
 
   useEffect(() => {
@@ -76,27 +108,34 @@ const App = () => {
     }
   }, [activePageNumber, processedItems]);
 
+  const checkShowingContents = () => {
+    return (itemsToDisplay !== null && loadingApiData !== true && loadingApiDataError === null) ? true : false
+  }
+
   return (
     <>
       <div style={{display: `flex`, alignItems: `flex-start`}}>
         <div>
           <div style={{width: `700px`, border: `2px solid grey`, padding: `25px 15px`}}>
-            {itemsToDisplay !== null && <FilterField
+            <ListToggler activeListType={activeListType} onListTypeButtonClick={handleActiveListTypeChange}/>
+            {loadingApiData === true && <p style={{width: `100%`, textAlign: `center`}}>Please wait...</p>}
+            {loadingApiDataError !== null && <p style={{width: `100%`, textAlign: `center`}}>Something went wrong...</p>}
+            {checkShowingContents() && <FilterField
               onFilterSubmit={handleFilterSubmit}
               filterRequest={filterRequest}
             />}
-            {itemsToDisplay !== null && <SortColumns
+            {checkShowingContents() && <SortColumns
               sortType={sortType}
               onSortColumnClick={handleSortTypeChange}
             />}
-            {itemsToDisplay !== null && <List
+            {checkShowingContents() && <List
               itemsToDisplay={itemsToDisplay}
               sortType={sortType}
               onColumnClick={handleSortTypeChange}
               onPersonClick={handleDetailsIdChange}
               detailsId={detailsId}
             />}
-            {itemsToDisplay !== null && <Paginator
+            {checkShowingContents() && <Paginator
               entriesPerPage={ITEMS_PER_PAGE}
               entriesQuantity={processedItems.length}
               activePageNumber={activePageNumber}
@@ -105,9 +144,7 @@ const App = () => {
           </div>
           {detailsId !== null && <Details detailsData={detailsData}/>}
         </div>
-        <div style={{border: `2px solid grey`, marginLeft: `7px`, padding: `25px 20px`}}>
-          <Form onPersonAddSubmit={handlePersonAdd}/>
-        </div>
+        {checkShowingContents() && <Form onPersonAddSubmit={handlePersonAdd}/>}
       </div>
     </>
   )

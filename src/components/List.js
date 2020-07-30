@@ -2,7 +2,7 @@ import React from 'react';
 
 const List = ({itemsToDisplay, detailsId, onPersonClick}) => {
   const buildLiItems = () => {
-    const basicStyle = {marginTop: `5px`, cursor: `pointer`, width: `630px`};
+    const basicStyle = {marginTop: `5px`, cursor: `pointer`, width: `655px`};
     const activeStyle = {...basicStyle, backgroundColor: `grey`, color: `white`};
 
     return itemsToDisplay.map((item, i) =>
@@ -14,14 +14,14 @@ const List = ({itemsToDisplay, detailsId, onPersonClick}) => {
         <span style={{display: `inline-block`, width: `70px`}}>{item.id}</span>
         <span style={{display: `inline-block`, width: `120px`}}>{item.firstName}</span>
         <span style={{display: `inline-block`, width: `140px`}}>{item.lastName}</span>
-        <span style={{display: `inline-block`, width: `200px`}}>{item.email}</span>
-        <span style={{display: `inline-block`, width: `100px`}}>{item.phone}</span>
+        <span style={{display: `inline-block`, width: `215px`}}>{item.email}</span>
+        <span style={{display: `inline-block`, width: `110px`}}>{item.phone}</span>
       </li>
     );
   };
   
   return(
-    <ul style={{listStyleType: `none`, paddingLeft: `35px`, margin: `0 auto`, height: `455px`}}>
+    <ul style={{listStyleType: `none`, paddingLeft: `25px`, margin: `0 auto`, height: `455px`}}>
       {buildLiItems()}
     </ul>
   )
