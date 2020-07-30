@@ -17,7 +17,14 @@ const FilterField = ({onFilterSubmit, filterRequest}) => {
     <div  style={{width: `80%`, display: `flex`, justifyContent: `center`, margin: `20px auto 0 auto`}}>
       <form style={{marginRight: `20px`}}>
         <label htmlFor="search">Type your filter request here:&nbsp;&nbsp;</label>
-        <input type="text" id="search" placeholder="hit Enter to submit" ref={inputRef} onKeyDown={handleEnterPress}></input>
+        <input 
+          type="text"
+          id="search"
+          placeholder={"hit Enter! (to reset if it's empty)"}
+          style={{width: `185px`}}
+          ref={inputRef}
+          onKeyDown={handleEnterPress}
+        ></input>
       </form>
 
       <span>{`Currently: ${(filterRequest === `` ? `none` : filterRequest)}`}</span>

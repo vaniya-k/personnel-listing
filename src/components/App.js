@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import ListToggler from './ListToggler';
 import FilterField from './FilterField';
-import SortColumns from './SortColumns';
+import SortTypeColumns from './SortTypeColumns';
 import Paginator from './Paginator';
 import List from './List';
 import Details from './Details';
@@ -124,7 +124,7 @@ const App = () => {
               onFilterSubmit={handleFilterSubmit}
               filterRequest={filterRequest}
             />}
-            {checkShowingContents() && <SortColumns
+            {checkShowingContents() && <SortTypeColumns
               sortType={sortType}
               onSortColumnClick={handleSortTypeChange}
             />}

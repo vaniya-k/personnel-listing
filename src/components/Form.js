@@ -5,8 +5,8 @@ const EMAIL_REGEX = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+[.][A-Za-z]{2,}$/;
 const PHONE_REGEX = /^([0-9()+\s-]{5,})*$/;
 
 const Form = ({onPersonAddSubmit}) => {
-  const initialFieldsValues = {id: ``, firstName: ``, lastName: ``, email: ``, phone: ``};
-  const [fieldsValues, setFieldsValues] = useState({...initialFieldsValues});
+  const fieldsInitialValues = {id: ``, firstName: ``, lastName: ``, email: ``, phone: ``};
+  const [fieldsValues, setFieldsValues] = useState({...fieldsInitialValues});
   const [fieldsValidity, setFieldsValidity] = useState({id: true, firstName: true, lastName: true, email: true, phone: true});
   const [isReadyToSubmit, setIsReadyToSubmit] = useState(false);
   
@@ -45,7 +45,7 @@ const Form = ({onPersonAddSubmit}) => {
     };
   };
 
-  const handleSubmit= (evt) => {
+  const handleSubmit= () => {
     if(isReadyToSubmit === true) {
       onPersonAddSubmit({
         id: Number.parseInt(fieldsValues.id),
@@ -62,6 +62,8 @@ const Form = ({onPersonAddSubmit}) => {
         }
       });
 
+      setFieldsValues(fieldsInitialValues);
+
       idRef.current.value = ``;
       firstNameRef.current.value = ``;
       lastNameRef.current.value = ``;
@@ -71,7 +73,7 @@ const Form = ({onPersonAddSubmit}) => {
   };
 
   useEffect(() => {
-    (Object.values(fieldsValidity).every(val => val === true) && Object.values(fieldsValues).every(val => val !== ``))
+    (Object.values(fieldsValidity).every((val) => val === true) && Object.values(fieldsValues).every((val) => val !== ``))
       ? setIsReadyToSubmit(true)
       : setIsReadyToSubmit(false)
   }, [fieldsValues, fieldsValidity]);
@@ -105,7 +107,13 @@ const Form = ({onPersonAddSubmit}) => {
         <input ref={phoneRef} type="text" id="phone" onChange={(e) => handleInput(e, `phone`)}></input>
       </form>
 
-      <button style={{width: `120px`, marginTop: `20px`}} onClick={handleSubmit}>{isReadyToSubmit ? `Ready to sumbit!`: `Fill out first..`}</button>
+      <button
+        style={{width: `120px`, marginTop: `20px`}}
+        disabled={!isReadyToSubmit ? true : false}
+        onClick={handleSubmit}
+      >
+        {isReadyToSubmit ? `Add!`: `Fill out first..`}
+      </button>
     </div>
   )
 };
