@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import FilterField from './FilterField';
+import SortColumns from './SortColumns';
 import Paginator from './Paginator';
 import List from './List';
 import Details from './Details';
@@ -15,6 +16,7 @@ const App = () => {
   const [sortType, setSortType] = useState({...initialSortType});
   const [activePageNumber, setActivePageNumber] = useState(1);
   const [filterRequest, setFilterRequest] = useState(``);
+
   const [initialItems, setInitialItems] = useState(sample);
   const [processedItems, setProcessedItems] = useState(null);
   const [itemsToDisplay, setItemsToDisplay] = useState(null);
@@ -53,6 +55,15 @@ const App = () => {
     }
   };
 
+  const handlePersonAdd = (person) => {
+    setItemsToDisplay(null);
+
+    const tempInitialItems = [...initialItems];
+    tempInitialItems.unshift(person);
+    
+    setInitialItems(tempInitialItems);
+  };
+
   useEffect(() => {
     setActivePageNumber(1);
 
@@ -74,6 +85,10 @@ const App = () => {
               onFilterSubmit={handleFilterSubmit}
               filterRequest={filterRequest}
             />}
+            {itemsToDisplay !== null && <SortColumns
+              sortType={sortType}
+              onSortColumnClick={handleSortTypeChange}
+            />}
             {itemsToDisplay !== null && <List
               itemsToDisplay={itemsToDisplay}
               sortType={sortType}
@@ -91,7 +106,7 @@ const App = () => {
           {detailsId !== null && <Details detailsData={detailsData}/>}
         </div>
         <div style={{border: `2px solid grey`, marginLeft: `7px`, padding: `25px 20px`}}>
-          <Form/>
+          <Form onPersonAddSubmit={handlePersonAdd}/>
         </div>
       </div>
     </>

@@ -11,7 +11,7 @@ const FilterField = ({onFilterSubmit, filterRequest}) => {
 
       inputRef.current.value = ``;
     }
-  }
+  };
 
   return (
     <div  style={{width: `80%`, display: `flex`, justifyContent: `center`, margin: `0 auto`}}>
@@ -19,6 +19,7 @@ const FilterField = ({onFilterSubmit, filterRequest}) => {
         <label htmlFor="search">Type your filter request here:&nbsp;&nbsp;</label>
         <input type="text" id="search" placeholder="hit Enter to submit" ref={inputRef} onKeyDown={handleEnterPress}></input>
       </form>
+
       <span>{`Currently: ${(filterRequest === `` ? `none` : filterRequest)}`}</span>
     </div>
   );

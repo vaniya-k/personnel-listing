@@ -13,7 +13,7 @@ const Paginator = ({activePageNumber, entriesPerPage, onPageButtonClick, entries
     names[names.length - 1] = `${((names.length - 1) * entriesPerPage) + 1}..${entriesQuantity}`
 
     return names;
-  }
+  };
   
   const buildPageButtons = () => {
     const basicStyle = {padding: `2px 4px`, outline: `2px solid grey`, cursor: `pointer`, fontSize: `11px`};
